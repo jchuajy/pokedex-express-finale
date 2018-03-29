@@ -34,6 +34,8 @@ app.set('view engine', 'handlebars');
  */
 
 // Import routes to match incoming requests
+//allow index.js to access the routes.js file, and allow routes.js to use the constant app and db to access their respective libraries
+require('./routes')(app, db);
 
 // Root GET request (it doesn't belong in any controller file)
 app.get("/", (request, response) => {
