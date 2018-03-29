@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Pokedex Finale!</title>
+</head>
+
+<body>
+      {{!-- set a title for easy identification of which page user is on --}}
+      <h1>Welcome to the online Pokedex!</h1>
+      <h1>{{pokemon.img}}</h1>
+      {{!-- We want to show users a picture, num, name of all pokemon in the pokedex --}} 
+      {{!-- if possible, onclick of the pokemon, go to the pokemons/id page --}} 
+      {{!-- for each pokemon, ... --}} 
+      {{#each pokemon}}
+      {{!-- create a div of class pokemon summary --}}
+      <div class="pokemon_summary">
+            {{!-- show an image of the pokemon --}}
+            <img src="{{this.img}}">
+            <br>
+            {{!-- show the num of the pokemon --}}
+            <h4>{{this.num}}</h4>
+            <br>
+            {{!-- show the name of the pokemon --}}
+            <h5>{{this.name}}</h5>
+      </div>
+      {{!-- end each statement --}}
+      {{/each}}
+</body>
+
+</html>
