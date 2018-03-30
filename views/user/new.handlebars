@@ -9,5 +9,17 @@
 <body>
       {{!-- title for easy identification --}}
       <h1>Create a new login!</h1>
+      <form method="POST" action="/users/new">
+            Username:
+            <input name="username" type="text">
+            <br>
+            Password: 
+            <input name="password" type="password">
+            <br>
+            Email address: 
+            <input name="email" type="text">
+            <br>
+            <input type="submit" value="Create!">
+      </form>
 </body>
 </html>
