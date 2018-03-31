@@ -8,6 +8,10 @@
  * Export the pool and models as a module using `module.exports`.
  */
 
+//declare the constant user to require the models/user file
+const user = require('./models/user');
+
+
 //this is where the configs for all the pool queries are made
 
 //require the pg library
@@ -31,7 +35,9 @@ pool.on('error', function (err) {
 
 //allow these "shortcuts" to be available to anything that references this file
 //for instance, db_config.pool() is as good as using pool.Something in this file.
-
+//when db.user is called, point to user.js file in models folder
 module.exports = {
       pool: pool,
+      //when db.user is called, point to user.js file in models folder. pass the parameter pool into the user.js file
+      user: user(pool)
     };

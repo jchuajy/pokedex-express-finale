@@ -17,19 +17,47 @@
 //the function showNewForm is a get request, so should use the parameters (request, response)
 function showNewForm(request, response) {
       //respond to the request made by the user by rendering the "new" handlebars in the views/user folder
-       response.render("user/new");
- };
+      response.render("user/new");
+};
 
+function createNewUser(db) {
+      return (request, response) => {
+            db.user.create(request.body, (error, queryResult) => {
+                  // queryResult of creation is not useful to us, so we ignore it
+                  // (console log it to see for yourself)
+                  // (you can choose to omit it completely from the function parameters)
 
- /**
+                  if (error) {
+                        console.error('error getting user:', error);
+                        response.sendStatus(500);
+                  };
+
+                  //if there is a query result,
+                  if (queryResult.rowCount >= 1) {
+                        //log that it was create successfully
+                        console.log('User created successfully');
+
+                        // // drop cookies to indicate user's logged in status and username
+                        // response.cookie('loggedIn', true);
+                        // response.cookie('username', request.body.name);
+                  } else {
+                        console.log('User could not be created');
+                  };
+                  // redirect to home page after creation
+                  response.redirect('/');
+            });
+      };
+};
+
+/**
  * ===========================================
  * Export controller functions as a module
  * ===========================================
  */
 
 //no need to pass any parameter here as we do not access the database
-//showNewForm becomes available to any files that require this user.js file
+//all functions becomes available to any files that require this user.js file
 module.exports = {
-      showNewForm
-    };
-    
+      showNewForm,
+      createNewUser
+};

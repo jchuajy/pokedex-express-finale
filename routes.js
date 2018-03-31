@@ -22,5 +22,8 @@ module.exports = (app, db) => {
 
        //if index.js heard a /users/new request, point to the constant users, which is inside user.js within the controller folder, and run the function showNewForm
        app.get("/users/new", users.showNewForm);
+       //if index.js heard a /users/new request, point to the constant users, which is inside user.js within the controller folder, and run the function createNewUser
+       //pass the constant db to the createNewUser function as it requires access to the postgres server
+       app.post("/users/new", users.createNewUser(db));
 
 }

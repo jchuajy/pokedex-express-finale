@@ -10,6 +10,8 @@ const handlebars = require('express-handlebars');
 //require the db_config file... basically the pools config and to allow pools queries to be called from here
 //do not require pg library as it is called in the db_config file
 const db = require('./db_config');
+//require body-parser to parse the data submitted using post request
+const bodyParser = require('body-parser');
 
 
 /**
@@ -22,6 +24,8 @@ const db = require('./db_config');
 const app = express();
 
 // Set up middleware
+//set up body-parser
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Set handlebars to be the default view engine
 app.engine('handlebars', handlebars.create().engine);
@@ -69,5 +73,7 @@ server.on('close', () => {
   console.log('Closed express server');
 
   // close database connection pool
-
+  db.pool.end(() => {
+    console.log('Shut down db connection pool');
+  });
 });
