@@ -11,7 +11,15 @@
 <body>
       {{!-- set a title for easy identification of which page user is on --}}
       <h1>Welcome to the online Pokedex{{#if loggedIn}}, {{username}}{{/if}}!</h1>
-      <h1>{{pokemon.img}}</h1>
+      {{#if loggedIn}}
+      <form method="POST" action="/users/logout">
+      <input type="submit" value="Logout">
+      </form>
+      {{else}}
+      <form method="GET" action="/users/login">
+      <input type="submit" value="Login">
+      </form>
+      {{/if}}
       {{!-- We want to show users a picture, num, name of all pokemon in the pokedex --}} 
       {{!-- if possible, onclick of the pokemon, go to the pokemons/id page --}} 
       {{!-- for each pokemon, ... --}} 
@@ -29,6 +37,7 @@
       </div>
       {{!-- end each statement --}}
       {{/each}}
+      
 </body>
 
 </html>
