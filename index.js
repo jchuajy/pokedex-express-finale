@@ -12,6 +12,8 @@ const handlebars = require('express-handlebars');
 const db = require('./db_config');
 //require body-parser to parse the data submitted using post request
 const bodyParser = require('body-parser');
+//require cookie parser to use cookies
+const cookieParser = require('cookie-parser');
 
 
 /**
@@ -26,6 +28,8 @@ const app = express();
 // Set up middleware
 //set up body-parser
 app.use(bodyParser.urlencoded({ extended: true }));
+//set up cookie parser
+app.use(cookieParser());
 
 // Set handlebars to be the default view engine
 app.engine('handlebars', handlebars.create().engine);
@@ -43,6 +47,9 @@ require('./routes')(app, db);
 
 // Root GET request (it doesn't belong in any controller file)
 app.get("/", (request, response) => {
+  //get the values of the cookies to get login status and display username if applicable
+  let loggedIn = request.cookies['loggedIn'];
+  let username = request.cookies['username'];
   //need to make a query to the postgres server
   //need to use the pool library in the db_configs file to get a query result in order to populate context. we use the constant db to reference the file.
   db.pool.query("SELECT * from pokemons", (error, queryResult) => {
@@ -52,6 +59,8 @@ app.get("/", (request, response) => {
     //write a context that will allow the home page to show desired information using query from server
     //this is located within the pool.query function in order to prevent async issues (takes time for queryResult to return)
     let context = {
+      loggedIn: loggedIn,
+      username: username,
       pokemon: queryResult.rows
     };
     //render home page

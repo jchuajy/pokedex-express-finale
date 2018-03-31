@@ -37,9 +37,9 @@ function createNewUser(db) {
                         //log that it was create successfully
                         console.log('User created successfully');
 
-                        // // drop cookies to indicate user's logged in status and username
-                        // response.cookie('loggedIn', true);
-                        // response.cookie('username', request.body.name);
+                        // create cookies to set login status and login id
+                        response.cookie('loggedIn', true);
+                        response.cookie('username', request.body.name);
                   } else {
                         console.log('User could not be created');
                   };
