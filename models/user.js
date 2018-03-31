@@ -38,6 +38,24 @@ const bcrypt = require('bcrypt');
                               callback(error, queryResult);
                         });
                   });
+            },
+            //compares login form password with the one in postgres server
+            login: (user, callback) => {
+                  //retrieve hashedpassword from postgres first
+                  //set up query
+                  const queryString = "SELECT id, name, password FROM users WHERE name='$1'"
+                  const values = [user.name]
+                  dbPool.query(queryString, values, (error, queryResult) => {
+                        console.log(queryResult)
+                        if (error) console.error('unable to retrive user pw from db', error);
+                        //compare submitted submitted password with the hashed password retrieved from postgres
+                        bcrypt.compare(user.password, queryResult, function(err, res) {
+                              //return the res of the bcrypt compare (true or false)
+                              console.log("true?" + res)
+                              callback(error, res)
+                        });
+                  })
+                  
             }
        };
  };

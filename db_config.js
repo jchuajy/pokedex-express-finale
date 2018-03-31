@@ -9,7 +9,7 @@
  */
 
 //declare the constant user to require the models/user file
-const user = require('./models/user');
+// const user = require('./models/user');
 
 
 //this is where the configs for all the pool queries are made
@@ -39,5 +39,5 @@ pool.on('error', function (err) {
 module.exports = {
       pool: pool,
       //when db.user is called, point to user.js file in models folder. pass the parameter pool into the user.js file
-      user: user(pool)
+      // user: user(pool)
     };

@@ -49,6 +49,19 @@ function createNewUser(db) {
       };
 };
 
+function goToLogin(request, response) {
+      response.render("user/login")
+}
+
+function login(db) {
+      return (request, response) => {
+            //request.body refers to the form data
+            db.user.login(request.body, (error, queryResult) => {
+                  
+            })
+      }
+}
+
 /**
  * ===========================================
  * Export controller functions as a module
@@ -59,5 +72,7 @@ function createNewUser(db) {
 //all functions becomes available to any files that require this user.js file
 module.exports = {
       showNewForm,
-      createNewUser
+      createNewUser,
+      goToLogin,
+      login
 };

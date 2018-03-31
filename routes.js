@@ -26,4 +26,9 @@ module.exports = (app, db) => {
        //pass the constant db to the createNewUser function as it requires access to the postgres server
        app.post("/users/new", users.createNewUser(db));
 
+       //User login functionality
+       //go to login page
+       app.get("/users/login", users.goToLogin);
+       //user form submission to check against postgres. need to pass db parameter here.
+       app.post("/users/login", users.login(db));
 }
