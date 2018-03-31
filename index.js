@@ -50,14 +50,14 @@ function goToHomePage(request, response) {
       let username = request.cookies['username'];
       //retrieve information from postgres about all pokemon
       //set up a queryString
-      let queryString = "SELECT * FROM pokemons";
+      let queryString = "SELECT * FROM pokemons ORDER BY id ASC";
       let values = [];
       //const db links to db_config file. pool calls the function pool in the module_exports
       db.pool.query(queryString, values, (error, queryResult) => {
             if (error) console.error("Error getting all pokemon!", error);
             //assign queryResult to the context
             let context = {
-                  pokemon: queryResult.rows[0],
+                  pokemon: queryResult.rows,
                   loggedIn: loggedIn,
                   username: username
             };
@@ -133,13 +133,122 @@ function logInUser(request, response) {
 };
 
 function logOutUser(request, response) {
-      console.log("logged out user")
+      console.log("Logged out user")
       //change cookie values
       response.clearCookie("loggedIn", false);
       response.clearCookie("username");
       response.redirect("/");
 };
 
+function showAllPokemon(request, response) {
+      //query postgres to get information of all pokemon
+      //set up query string
+      let queryString = "SELECT * from pokemons";
+      let values = [];
+      //query the server
+      db.pool.query(queryString, values, (error, queryResult) => {
+            //error log
+            if (error) console.log("Error retrieving all pokemon", error);
+            //write the context for rendering the page
+            let context = {
+                  pokemon: queryResult.rows
+            };
+            //render the page
+            response.render("pokemon/all", context);
+      });
+};
+
+//set up leading zeroes for id
+function leadZero(number) {
+      if (number < 10) {
+            return ("0" + "0" + number);
+      } else if (number < 100) {
+            return ("0" + number);
+      } else {
+            return number;
+      };
+};
+
+function showPokemonById(request, response) {
+      //request.params.id refers to the id input into the url
+      //set queryString
+      let queryString = "SELECT * FROM pokemons WHERE num=$1";
+      let values = [leadZero(request.params.id)];
+      //query the server for pokemon info
+      db.pool.query(queryString, values, (error, queryResult) => {
+            //error log
+            if (error) console.error("Error retrieving specified pokemon", error);
+            //write the context for rendering page
+            let context = {
+                  pokemon: queryResult.rows[0]
+            };
+
+            response.render("pokemon/pokemon", context);
+      });
+};
+
+function editPokemonById(request, response) {
+      //request.params.id refers to id in url
+      //set queryString
+      let queryString = "SELECT * FROM pokemons WHERE num=$1";
+      let values = [leadZero(request.params.id)];
+      //query the server for pokemon info
+      db.pool.query(queryString, values, (error, queryResult) => {
+            //error log
+            if (error) console.error("Error retrieving specified pokemon", error);
+            //write the context for rendering page
+            let context = {
+                  pokemon: queryResult.rows[0]
+            };
+            response.render("pokemon/edit", context);
+      });
+};
+
+function savePokemonEdits(request, response) {
+      //request.body refers to form data
+      //set queryString
+      let queryString = "UPDATE pokemons SET num= $1, name = $2, img = $3, weight = $4, height = $5 WHERE id = " + request.params.id;
+      let values = [request.body.num, request.body.name, request.body.img, request.body.weight, request.body.height];
+      //save the values onto the server
+      db.pool.query(queryString, values, (error, queryResult) => {
+            //error log
+            if (error) console.error("Error saving changes", error);
+            //redirect to the page showing edited pokemon
+            response.redirect("/pokemons/" + request.params.id);
+      });
+};
+
+function deletePokemon(request, response) {
+      //request.params.id refers to id at the url
+      //set queryString
+      let queryString = "DELETE FROM pokemons WHERE num = $1";
+      let values = [leadZero(request.params.id)];
+      //delete the information from the server
+      db.pool.query(queryString, values, (error, queryResult) => {
+            //error log
+            if (error) console.error("Error deleting pokemon!", error);
+            //redirect to the home page
+            response.redirect("/");
+      });
+};
+
+function goToPokemonCreation(request, response) {
+      response.render("pokemon/new");
+};
+
+function createNewPokemon(request, response) {
+      //request.body refers to form data
+      //set queryString
+      let queryString = "INSERT INTO pokemons (num, name, img, weight, height) VALUES ($1, $2, $3, $4, $5)";
+      let values = [request.body.num, request.body.name, request.body.img, request.body.weight, request.body.height];
+      //add the information to the server
+      db.pool.query(queryString, values, (error, queryResult) => {
+            //error log
+            if (error) console.error("Error deleting pokemon!", error);
+            //redirect to home page
+            response.redirect("/");
+      });
+};
 
 /**
  * ===================================
@@ -147,6 +256,7 @@ function logOutUser(request, response) {
  * ===================================
  */
 
+//USERS
 //create route for rendering home page
 app.get("/", goToHomePage);
 //create route for rendering new user form
@@ -157,6 +267,15 @@ app.get("/users/login", goToLogin);
 app.post("/users/login", logInUser);
 app.post("/users/logout", logOutUser);
 
+
+//POKEMON
+app.get("/pokemons/new", goToPokemonCreation);
+app.put("/pokemons/:id", savePokemonEdits);
+app.delete("/pokemons/:id", deletePokemon);
+app.get("/pokemons/:id/edit", editPokemonById);
+app.get("/pokemons/:id", showPokemonById);
+app.get("/pokemons", showAllPokemon);
+app.post("/pokemons", createNewPokemon);
 
 
 //catchall for unmatched requests. return 404 page
